@@ -1,4 +1,6 @@
 import Component from './Component.js'
+import {TodoObj} from './ObjGenerator.js'
+import App from './App.js'
 
 class TodosInfo extends Component{
     totalTodos = []
@@ -6,7 +8,17 @@ class TodosInfo extends Component{
 
     set todoList(list){
         this.totalTodos = list
-        this.output = `<h2>Completed ${this.totalCompleted} / ${list.length}</h2>` 
+        this.output = `
+            <div>
+                <h2>Completed ${this.totalCompleted} / ${list.length}</h2>
+                <form>
+                    <input type="text" placeholder="Title" name="title"/>
+                    <textarea name="description">
+                    </textarea>
+                    <button>Submit</button>
+                </form>
+            </div>    
+            ` 
     }
 
     get totalCompleted(){
@@ -20,15 +32,26 @@ class TodosInfo extends Component{
         this.render()
     }
 
-    addTodo(todo){
-        const updatedTodos = [...this.totalTodos]
-        updatedTodos.push(todo)
-        this.todoList = updatedTodos
+    handleSubmit(event){
+        event.preventDefault()
+        const title = event.target.title.value.trim()
+        const description = event.target.description.value.trim()
+        const newObj = new TodoObj(title, description)
+
+        const updatedList = [...this.totalTodos, newObj]
+        this.todoList = updatedList
+        App.addTodo(newObj)
+        this.renderContent(document.querySelector('.info'))
+    }
+
+    renderContent(container){
+        container.innerHTML = this.output
+        container.querySelector('form').addEventListener('submit', this.handleSubmit.bind(this))
     }
 
     render(){
         const container = this.createRootElement('div', ['info'])
-        container.innerHTML = this.output
+        this.renderContent(container)
     }
 }
 

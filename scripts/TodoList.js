@@ -26,7 +26,13 @@ class TodoList extends Component{
         this.renderList()
     }
 
+    addToList(obj){
+        this.todoList.push(obj)
+        this.renderList()
+    }
+
     renderList(){
+        document.querySelector('#'+this.containerId).innerHTML = ''
         for(const todo of this.todoList){
             new TodoItem(this.containerId, todo)
         }
